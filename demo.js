@@ -44,6 +44,13 @@ $(function(){
 		classes: 'ui-switchbutton-thin',
 		labels: false
 	});
+	
+	/* Switch 8: ios style */
+	
+	$("#switch8").switchbutton({
+		classes: 'ui-switchbutton-ios5'
+	});
+	
 });
 
 $(function(){

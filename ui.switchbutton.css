@@ -80,6 +80,7 @@
 	opacity: 0.4;
 	-ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
 	filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
+	filter: Alpha(Opacity=40);
 	cursor: default;
 }
 
@@ -142,6 +143,7 @@
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
+	padding-right: 4px;
 }
 
 .ui-switchbutton-default .ui-switchbutton-handle {
@@ -191,6 +193,21 @@
 	-webkit-border-radius: 12px;
 	-moz-border-radius: 12px;
 	border-radius: 12px;
+	-webkit-border-top-right-radius: 0px;
+	-moz-border-radius-topright: 0px;
+	border-top-right-radius: 0px;
+	-webkit-border-bottom-right-radius: 0px;
+	-moz-border-radius-bottomright: 0px;
+	border-bottom-right-radius: 0px;
+}
+
+
+.ui-switchbutton-ios5 label.ui-switchbutton-enabled {
+	padding-right: 0px;
+}
+
+.ui-switchbutton-ios5.ui-state-active label.ui-switchbutton-enabled {
+	padding-right: 10px;
 }
 
 .ui-switchbutton-ios5 .ui-switchbutton-handle {

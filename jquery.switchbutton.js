@@ -17,7 +17,6 @@
 	$.widget('switchbutton.switchbutton', {
 		
 		options: {
-			handleRadius: 4, // TODO - must find a better way to get the border-radius value via .css()
 			classes: '',
 			duration: 200,
 			dragThreshold: 5,
@@ -38,7 +37,7 @@
 		},
 		
 		_create: function() {
-			if(!this.element.is(":checkbox")) {
+			if(!this.element.is(':checkbox')) {
 				return;
 			}
 			
@@ -47,10 +46,14 @@
 			this._globalEvents();
 			this._disableTextSelection();
 			
+			if(this.element.prop('checked')) {
+				this.$container.toggleClass('ui-state-active', this.element.prop('checked'));
+			}
+			
 			if(this.options.autoResize) {
 				this._autoResize();
 			}
-			
+				
 			this._initialPosition();
 		},
 		
@@ -76,7 +79,7 @@
 				.bind('mousedown touchstart', function(event) {
 					event.preventDefault();
 
-					if(obj.element.is(':disabled')) { return; }
+					if(obj.element.prop('disabled')) { return; }
 
 					var x = event.pageX || event.originalEvent.changedTouches[0].pageX;
 					$[switchbutton].currentlyClicking	= obj.$handle;
@@ -89,23 +92,23 @@
 				.bind('iPhoneDrag', function(event, x) {
 					event.preventDefault();
 
-					if(obj.element.is(':disabled')) { return; }
+					if(obj.element.prop('disabled')) { return; }
 					if(obj.element != $[switchbutton].dragStartedOn) { return; }
 
 					var p = (x + $[switchbutton].handleLeftOffset - $[switchbutton].dragStartPosition) / obj.rightSide;
 					if(p < 0) { p = 0; }
 					if(p > 1) { p = 1; }
 					obj.$handle.css({ 'left': p * obj.rightSide });
-					obj.$enabledLabel.css({ 'width': p * obj.rightSide + (obj.rightSide == 0 ? 0 : obj.options.handleRadius) });
+					obj.$enabledLabel.css({ 'width': p * obj.rightSide });
 					obj.$disabledSpan.css({ 'margin-right': -p * obj.rightSide });
 					obj.$enabledSpan.css({ 'margin-left': -(1 - p) * obj.rightSide });
 				})
 
 				// Utilize event bubbling to handle drag end on any element beneath the container
 				.bind('iPhoneDragEnd', function(event, x) {
-					if(obj.element.is(':disabled')) { return; }
+					if(obj.element.prop('disabled')) { return; }
 
-					var willChangeEvent = jQuery.Event("willChange");
+					var willChangeEvent = jQuery.Event('willChange');
 					obj.element.trigger(willChangeEvent);
 					if(willChangeEvent.isDefaultPrevented()) {
 						checked = obj.element.prop('checked');
@@ -125,8 +128,9 @@
 					$[switchbutton].dragging = null;
 
 					obj.element.prop('checked', checked);
+					obj.$container.toggleClass('ui-state-active', checked);
 					obj.element.change();
-					obj.element.trigger("didChange");
+					obj.element.trigger('didChange');
 				});
 
 			// Animate when we get a change event
@@ -136,7 +140,7 @@
 				var new_left = obj.element.prop('checked') ? obj.rightSide : 0;
 				
 				obj.$handle.animate({ 'left': new_left }, obj.options.duration);
-				obj.$enabledLabel.animate({ 'width': new_left + (new_left == 0 ? 0 : obj.options.handleRadius) }, obj.options.duration);
+				obj.$enabledLabel.animate({ 'width': new_left }, obj.options.duration);
 				obj.$disabledSpan.animate({ 'margin-right': -new_left }, obj.options.duration);
 				obj.$enabledSpan.animate({ 'margin-left': new_left - obj.rightSide }, obj.options.duration);
 			});
@@ -178,7 +182,7 @@
 			if (!$.browser.msie) { return; }
 			
 			// Elements containing text should be unselectable
-			$([this.$handle, this.$disabledLabel, this.$enabledLabel, this.$container]).attr("unselectable", "on");
+			$([this.$handle, this.$disabledLabel, this.$enabledLabel, this.$container]).attr('unselectable', 'on');
 		},
 			
 		_autoResize: function() {
@@ -204,12 +208,9 @@
 
 			this.rightSide = this.$container.width() - this.$handle.outerWidth();
 			
-			// FIXME
-			// var handleRadius = this.$handle.css('border-radius');
-			
-			if(this.element.is(':checked')) {
+			if(this.element.prop('checked')) {
 				this.$handle.css({ 'left': this.rightSide });
-				this.$enabledLabel.css({ 'width': this.rightSide + (this.rightSide == 0 ? 0 : this.options.handleRadius) });
+				this.$enabledLabel.css({ 'width': this.rightSide });
 				this.$disabledSpan.css({ 'margin-right': -this.rightSide });
 			}
 			else {
@@ -221,15 +222,15 @@
 		},
 		
 		enable: function() {
-			this.element.prop("disabled", false);
+			this.element.prop('disabled', false);
 			this.refresh();
-			return this._setOption("disabled", false);
+			return this._setOption('disabled', false);
 		},
 		
 		disable: function() {
-			this.element.prop("disabled", true);
+			this.element.prop('disabled', true);
 			this.refresh();
-			return this._setOption("disabled", true);
+			return this._setOption('disabled', true);
 		},
 		
 		widget: function() {
@@ -237,14 +238,16 @@
 		},
 		
 		refresh: function() {
-			if(this.element.is(':disabled')) {
+			if(this.element.prop('disabled')) {
+				console.log('is disabled - add class');
 				this.$container.addClass(this.options.disabledClass);
 				return false;
 			}
 			else {
+				console.log('not disabled - remove class');
 				this.$container.removeClass(this.options.disabledClass);
 			}
-		},
+		}
 		
 	});
 	

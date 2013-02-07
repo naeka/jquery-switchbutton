@@ -239,12 +239,10 @@
 		
 		refresh: function() {
 			if(this.element.prop('disabled')) {
-				console.log('is disabled - add class');
 				this.$container.addClass(this.options.disabledClass);
 				return false;
 			}
 			else {
-				console.log('not disabled - remove class');
 				this.$container.removeClass(this.options.disabledClass);
 			}
 		}

@@ -116,6 +116,8 @@
 					event.preventDefault();
 
 					if(obj.element.prop('disabled')) { return; }
+					
+					$(this).focus();
 
 					var x = event.pageX || event.originalEvent.changedTouches[0].pageX;
 					$[switchbutton].currentlyClicking	= obj.$handle;

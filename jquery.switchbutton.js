@@ -11,7 +11,6 @@
  *	jquery.ui.widget.js (jQuery UI Widget Factory - http://wiki.jqueryui.com/w/page/12138135/Widget%20factory)
  * 	jquery.tmpl.js (jQuery Templates - http://api.jquery.com/category/plugins/templates/)
  */
-
 (function($, switchbutton){
 	
 	$.widget('switchbutton.switchbutton', {
@@ -25,7 +24,7 @@
 			checkedLabel: 'ON',
 			uncheckedLabel: 'OFF',
 			disabledClass: 'ui-switchbutton-disabled ui-state-disabled',
-			template:	'<div class="ui-switchbutton ui-switchbutton-default ${classes} {{if !labels}}ui-switchbutton-no-labels{{/if}}">' +
+			template:	'<div class="ui-switchbutton ui-switchbutton-default ${classes} {{if !labels}}ui-switchbutton-no-labels{{/if}}" tabindex=0>' +
 							'<label class="ui-switchbutton-disabled">' +
 								'<span>{{if labels}}${uncheckedLabel}{{/if}}</span>' +
 							'</label>' +
@@ -75,11 +74,50 @@
 			var obj = this;
 
 			this.$container
+			
+				// Listen for keyboard events such as <space>, <left> and <right>
+				.bind('keydown', function(event){
+					
+					//Ignore if a key combo was used
+					if(event.ctrlKey || event.altKey || event.metaKey || event.shiftKey){
+						return;
+					}
+					
+					//Catch <space>, <left>, and <right>
+					if(event.keyCode == 32 || event.keyCode == 37 || event.keyCode == 39) event.preventDefault();
+					
+					//Ignore if the element is disabled
+					if(obj.element.prop('disabled')) {
+						return;
+					}
+					
+					//Determine if we're supposed to toggle
+					var checked = obj.element.prop('checked')
+					if(event.keyCode == 32 || (event.keyCode == 37 && checked) || (event.keyCode == 39 && !checked)) { 
+
+						//Perform the toggle
+						var willChangeEvent = jQuery.Event('willChange');
+						obj.element.trigger(willChangeEvent);
+						if(willChangeEvent.isDefaultPrevented()) return;
+						
+						checked = !checked;
+	
+						obj.element.prop('checked', checked);
+						obj.$container.toggleClass('ui-state-active', checked);
+						obj.element.change();
+						obj.element.trigger('didChange');
+						
+					}
+										
+				})
+			
 				// A mousedown anywhere in the control will start tracking for dragging
 				.bind('mousedown touchstart', function(event) {
 					event.preventDefault();
 
 					if(obj.element.prop('disabled')) { return; }
+					
+					$(this).focus();
 
 					var x = event.pageX || event.originalEvent.changedTouches[0].pageX;
 					$[switchbutton].currentlyClicking	= obj.$handle;
@@ -178,9 +216,6 @@
 		},
 		
 		_disableTextSelection: function() {
-			// Disable IE text selection, other browsers are handled in CSS
-			if (!$.browser.msie) { return; }
-			
 			// Elements containing text should be unselectable
 			$([this.$handle, this.$disabledLabel, this.$enabledLabel, this.$container]).attr('unselectable', 'on');
 		},

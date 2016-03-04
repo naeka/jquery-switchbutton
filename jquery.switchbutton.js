@@ -222,8 +222,12 @@
 			
 		_autoResize: function() {
 			var	onLabelWidth	= this.$enabledLabel.width(),
-				offLabelWidth	= this.$disabledLabel.width(),
-				spanPadding		= this.$disabledSpan.innerWidth() - this.$disabledSpan.width()
+				offLabelWidth	= this.$disabledLabel.width();
+			//If width() return 0, then the min width of switch is maintained for default value.
+			if(offLabelWidth === 0) {
+				offLabelWidth = 32;
+			}
+			var spanPadding		= this.$disabledSpan.innerWidth() - this.$disabledSpan.width(),
 				handleMargins	= this.$handle.outerWidth() - this.$handle.innerWidth();
 			
 			var containerWidth = handleWidth = (onLabelWidth > offLabelWidth) ? onLabelWidth : offLabelWidth;
